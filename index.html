@@ -68,16 +68,16 @@
     <div class="section ruleSection">
       <h2>Définition des règles</h2>
       <label for="uppercase">Entrez le nombre minimum de lettres majuscules:</label>
-      <input type="number" id="uppercase" name="uppercase" required>
+      <input type="number" id="uppercase" name="uppercase" value="2" required>
 
       <label for="special">Entrez le nombre minimum de caractères spéciaux:</label>
-      <input type="number" id="special" name="special" required>
+      <input type="number" id="special" name="special" value="2" required>
 
       <label for="characters">Entrez les caractères spéciaux autorisés (sans espace, par exemple : @#$%):</label>
-      <input type="text" id="characters" name="characters" required>
+      <input type="text" id="characters" name="characters" value="@#$%" required>
 
       <label for="length">Entrez la longueur minimale du mot de passe:</label>
-      <input type="number" id="length" name="length" required>
+      <input type="number" id="length" name="length" value="12" required>
     </div>
 
     <div class="section passwordSection">
@@ -105,6 +105,11 @@
       var minSpecial = document.getElementById("special").value;
       var minCharacters = document.getElementById("characters").value;
       var minLength = document.getElementById("length").value;
+
+      if(minUppercase === "" || minSpecial === "" || minCharacters === "" || minLength === "") {
+        alert("Veuillez remplir tous les champs de règles de conformité.");
+        return;
+      }
 
       var specialCharacters = new RegExp('[' + minCharacters + ']', 'g');
       var specialMatch = password.match(specialCharacters);
