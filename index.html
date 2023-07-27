@@ -8,7 +8,8 @@
     }
 
     .container {
-      width: 600px;
+      width: 90%;
+      max-width: 600px;
       margin: auto;
     }
 
@@ -51,8 +52,14 @@
     }
 
     #passwordRules {
-      color: red;
       font-weight: bold;
+    }
+
+    /* Responsive design */
+    @media screen and (max-width: 600px) {
+      .container {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -104,12 +111,16 @@
 
       if(password.length < minLength) {
         passwordRules.innerHTML = "Votre mot de passe doit avoir une longueur minimale de " + minLength + " caractères.";
+        passwordRules.style.color = "red";
       } else if(!lowerMatch) {
         passwordRules.innerHTML = "Votre mot de passe doit contenir des lettres minuscules.";
+        passwordRules.style.color = "red";
       } else if(!upperMatch || upperMatch.length < minUppercase) {
         passwordRules.innerHTML = "Votre mot de passe doit contenir au moins " + minUppercase + " lettres majuscules.";
+        passwordRules.style.color = "red";
       } else if(!specialMatch || specialMatch.length < minSpecial) {
         passwordRules.innerHTML = "Votre mot de passe doit contenir au moins " + minSpecial + " des caractères spéciaux suivants : " + minCharacters;
+        passwordRules.style.color = "red";
       } else {
         passwordRules.innerHTML = "Votre mot de passe est robuste.";
         passwordRules.style.color = "green";
