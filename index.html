@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vérification de la robustesse du mot de passe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 600px;
+      margin: auto;
+    }
+
+    .section {
+      border: 1px solid black;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .ruleSection {
+      background-color: #f2f2f2;
+    }
+
+    .passwordSection {
+      background-color: #e6e6ff;
+    }
+
+    input[type="text"], input[type="password"], input[type="number"] {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px 20px;
+      margin: 8px 0;
+      color: white;
+      background-color: #4CAF50;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    #passwordRules {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="section ruleSection">
+      <h2>Définition des règles</h2>
+      <label for="uppercase">Entrez le nombre minimum de lettres majuscules:</label>
+      <input type="number" id="uppercase" name="uppercase" required>
+
+      <label for="special">Entrez le nombre minimum de caractères spéciaux:</label>
+      <input type="number" id="special" name="special" required>
+
+      <label for="characters">Entrez les caractères spéciaux autorisés (sans espace, par exemple : @#$%):</label>
+      <input type="text" id="characters" name="characters" required>
+
+      <label for="length">Entrez la longueur minimale du mot de passe:</label>
+      <input type="number" id="length" name="length" required>
+    </div>
+
+    <div class="section passwordSection">
+      <h2>Vérification du mot de passe</h2>
+      <label for="password">Entrez votre mot de passe:</label>
+      <input type="password" id="password" name="password" required>
+
+      <button onclick="checkPassword()">Vérifier la robustesse</button>
+      <p id="passwordRules"></p>
+    </div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      var password = document.getElementById("password").value;
+      var passwordRules = document.getElementById("passwordRules");
+
+      var lowerCaseLetters = /[a-z]/g;
+      var upperCaseLetters = /[A-Z]/g;
+
+      var lowerMatch = password.match(lowerCaseLetters);
+      var upperMatch = password.match(upperCaseLetters);
+
+      var minUppercase = document.getElementById("uppercase").value;
+      var minSpecial = document.getElementById("special").value;
+      var minCharacters = document.getElementById("characters").value;
+      var minLength = document.getElementById("length").value;
+
+      var specialCharacters = new RegExp('[' + minCharacters + ']', 'g');
+      var specialMatch = password.match(specialCharacters);
+
+      if(password.length < minLength) {
+        passwordRules.innerHTML = "Votre mot de passe doit avoir une longueur minimale de " + minLength + " caractères.";
+      } else if(!lowerMatch) {
+        passwordRules.innerHTML = "Votre mot de passe doit contenir des lettres minuscules.";
+      } else if(!upperMatch || upperMatch.length < minUppercase) {
+        passwordRules.innerHTML = "Votre mot de passe doit contenir au moins " + minUppercase + " lettres majuscules.";
+      } else if(!specialMatch || specialMatch.length < minSpecial) {
+        passwordRules.innerHTML = "Votre mot de passe doit contenir au moins " + minSpecial + " des caractères spéciaux suivants : " + minCharacters;
+      } else {
+        passwordRules.innerHTML = "Votre mot de passe est robuste.";
+        passwordRules.style.color = "green";
+      }
+    }
+  </script>
+</body>
+</html>
