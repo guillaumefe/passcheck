@@ -35,6 +35,7 @@
         .rule label {
             flex: 1;
             margin-right: 10px;
+			font-size: 6px;
         }
         .rule input {
             flex: 1;
@@ -72,29 +73,6 @@
 <body>
 <div id="main-container">
     <h1>Vérificateur de robustesse de mot de passe</h1>
-	<div id="rulesContainer">
-		<h2>Définissez vos règles de conformité</h2>
-		<div class="rule">
-			<label for="length">Longueur minimale :</label>
-			<input type="number" id="length" value="8" oninput="displayScore(); checkPassword();">
-		</div>
-		<div class="rule">
-			<label for="uppercase">Nombre minimum de majuscules :</label>
-			<input type="number" id="uppercase" value="1" oninput="displayScore(); checkPassword();">
-		</div>
-		<div class="rule">
-			<label for="special">Nombre minimum de caractères spéciaux :</label>
-			<input type="number" id="special" value="1" oninput="displayScore(); checkPassword();">
-		</div>
-		<div class="rule">
-			<label for="digits">Nombre minimum de chiffres :</label>
-			<input type="number" id="digits" value="1" oninput="displayScore(); checkPassword();">
-		</div>
-		<div class="rule">
-			<label for="characters">Caractères spéciaux autorisés :</label>
-			<input type="text" id="characters" value="@#$%" oninput="displayScore(); checkPassword();">
-		</div>
-	</div>
     <div id="passwordContainer">
         <h2>Vérifiez votre mot de passe</h2>
         <div class="passwordCheck">
@@ -105,6 +83,29 @@
         <p id="passwordRules"></p>
         <h3 id="scoreDisplay" style="display: none;">Score de conformité : <span id="score">0</span></h3>
     </div>
+	<div id="rulesContainer">
+		<h2>Définissez vos règles de conformité</h2>
+		<div class="rule">
+			<label for="length">Longueur minimale</label>
+			<input type="number" id="length" value="8" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="uppercase">Nombre minimum de majuscules</label>
+			<input type="number" id="uppercase" value="1" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="special">Nombre minimum de caractères spéciaux</label>
+			<input type="number" id="special" value="1" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="digits">Nombre minimum de chiffres</label>
+			<input type="number" id="digits" value="1" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="characters">Caractères spéciaux autorisés</label>
+			<input type="text" id="characters" value="@#$%" oninput="displayScore(); checkPassword();">
+		</div>
+	</div>
 </div>
 <script>
 
@@ -249,4 +250,3 @@
 </script>
 </body>
 </html>
-
