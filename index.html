@@ -82,6 +82,7 @@
         <h2>Vérifiez votre mot de passe</h2>
         <div class="passwordCheck">
             <input type="password" id="password" oninput="displayScore(); clearPasswordRules();">
+            <button id="generatePasswordButton" onclick="generatePassword()">Générer</button> <!-- Nouveau bouton -->
             <button id="toggleVisibilityButton" onclick="togglePasswordVisibility()">🙈</button>
         </div>
         <button onclick="checkPassword()">Vérifier</button>
@@ -252,7 +253,36 @@
 		return { color, level };
 	}
 
+	function generatePassword() {
+		let minLength = Number(document.getElementById("length").value);
+		let minUppercase = Number(document.getElementById("uppercase").value);
+		let minDigits = Number(document.getElementById("digits").value);
+		let minSpecial = Number(document.getElementById("special").value);
+		let characters = document.getElementById("characters").value;
+
+		let password = "";
+		let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" + characters;
+
+		for (let i = 0; i < minLength; i++) {
+			password += possible.charAt(Math.floor(Math.random() * possible.length));
+		}
+
+		// Vérifiez qu'il y a assez de chaque type de caractères
+		if ((password.match(/[A-Z]/g) || []).length < minUppercase ||
+			(password.match(/[0-9]/g) || []).length < minDigits ||
+			(password.match(new RegExp(`[${characters}]`, 'g')) || []).length < minSpecial) {
+			// Si ce n'est pas le cas, générer un nouveau mot de passe
+			return generatePassword();
+		}
+
+		// Mettez le mot de passe généré dans le champ de mot de passe
+		document.getElementById("password").value = password;
+
+		// Mettez à jour le score et les règles du mot de passe
+		displayScore();
+		checkPassword();
+	}
+
 </script>
 </body>
 </html>
-
