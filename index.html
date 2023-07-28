@@ -1,136 +1,252 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Vérification de la robustesse du mot de passe</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .section {
-      border: 1px solid black;
-      border-radius: 5px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .ruleSection {
-      background-color: #f2f2f2;
-    }
-
-    .passwordSection {
-      background-color: #e6e6ff;
-    }
-
-    input[type="text"], input[type="password"], input[type="number"] {
-      width: 100%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      display: inline-block;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px 20px;
-      margin: 8px 0;
-      color: white;
-      background-color: #4CAF50;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.8;
-    }
-
-    #passwordRules {
-      font-weight: bold;
-    }
-
-    /* Responsive design */
-    @media screen and (max-width: 600px) {
-      .container {
-        width: 100%;
-      }
-    }
-  </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        #main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        #rulesContainer, #passwordContainer {
+            background-color: white;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        #passwordRules, #scoreDisplay {
+            font-size: 18px;
+        }
+        .rule {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .rule label {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .rule input {
+            flex: 1;
+        }
+        #password {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        #toggleVisibilityButton {
+            background-color: #ccc;
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        button, input[type="number"], input[type="text"], input[type="password"] {
+            height: 35px;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .passwordCheck {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="section ruleSection">
-      <h2>Définition des règles</h2>
-      <label for="uppercase">Entrez le nombre minimum de lettres majuscules:</label>
-      <input type="number" id="uppercase" name="uppercase" value="2" required>
-
-      <label for="special">Entrez le nombre minimum de caractères spéciaux:</label>
-      <input type="number" id="special" name="special" value="2" required>
-
-      <label for="characters">Entrez les caractères spéciaux autorisés (sans espace, par exemple : @#$%):</label>
-      <input type="text" id="characters" name="characters" value="@#$%" required>
-
-      <label for="length">Entrez la longueur minimale du mot de passe:</label>
-      <input type="number" id="length" name="length" value="12" required>
+<div id="main-container">
+    <h1>Vérificateur de robustesse de mot de passe</h1>
+	<div id="rulesContainer">
+		<h2>Définissez vos règles de conformité</h2>
+		<div class="rule">
+			<label for="length">Longueur minimale :</label>
+			<input type="number" id="length" value="8" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="uppercase">Nombre minimum de majuscules :</label>
+			<input type="number" id="uppercase" value="1" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="special">Nombre minimum de caractères spéciaux :</label>
+			<input type="number" id="special" value="1" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="digits">Nombre minimum de chiffres :</label>
+			<input type="number" id="digits" value="1" oninput="displayScore(); checkPassword();">
+		</div>
+		<div class="rule">
+			<label for="characters">Caractères spéciaux autorisés :</label>
+			<input type="text" id="characters" value="@#$%" oninput="displayScore(); checkPassword();">
+		</div>
+	</div>
+    <div id="passwordContainer">
+        <h2>Vérifiez votre mot de passe</h2>
+        <div class="passwordCheck">
+            <input type="password" id="password" oninput="displayScore(); clearPasswordRules();">
+            <button id="toggleVisibilityButton" onclick="togglePasswordVisibility()">🙈</button>
+        </div>
+        <button onclick="checkPassword()">Vérifier</button>
+        <p id="passwordRules"></p>
+        <h3 id="scoreDisplay" style="display: none;">Score de conformité : <span id="score">0</span></h3>
     </div>
+</div>
+<script>
 
-    <div class="section passwordSection">
-      <h2>Vérification du mot de passe</h2>
-      <label for="password">Entrez votre mot de passe:</label>
-      <input type="password" id="password" name="password" required>
+	// Variables for HTML Text
+	const mainTitle = "Vérificateur de robustesse de mot de passe";
+	const subtitle1 = "Définissez vos règles de conformité";
+	const subtitle2 = "Vérifiez votre mot de passe";
+	
+	const totalScore = 10;
+	const labels = {
+		length: "Longueur minimale :",
+		uppercase: "Nombre minimum de majuscules :",
+		special: "Nombre minimum de caractères spéciaux :",
+		digits: "Nombre minimum de chiffres :",
+		characters: "Caractères spéciaux autorisés :",
+	};
 
-      <button onclick="checkPassword()">Vérifier la robustesse</button>
-      <p id="passwordRules"></p>
-    </div>
-  </div>
+	const errorMessages = {
+		emptyPassword: "Veuillez entrer un mot de passe.",
+		notRobust: "Pas assez robuste",
+		robust: "Robuste",
+		veryRobust: "Très robuste",
+	}
 
-  <script>
-    function checkPassword() {
-      var password = document.getElementById("password").value;
-      var passwordRules = document.getElementById("passwordRules");
+	// Setting HTML Text from Variables
+	document.getElementById('title').textContent = mainTitle;
+	document.getElementById('subTitle1').textContent = subtitle1;
+	document.getElementById('subTitle2').textContent = subtitle2;
 
-      var lowerCaseLetters = /[a-z]/g;
-      var upperCaseLetters = /[A-Z]/g;
+	// Labels for the input fields
+	Object.keys(labels).forEach((key) => {
+		document.querySelector(`label[for="${key}"]`).textContent = labels[key];
+	});
 
-      var lowerMatch = password.match(lowerCaseLetters);
-      var upperMatch = password.match(upperCaseLetters);
+	function togglePasswordVisibility() {
+		const passwordInput = document.getElementById("password");
+		const toggleVisibilityButton = document.getElementById("toggleVisibilityButton");
 
-      var minUppercase = document.getElementById("uppercase").value;
-      var minSpecial = document.getElementById("special").value;
-      var minCharacters = document.getElementById("characters").value;
-      var minLength = document.getElementById("length").value;
+		if (passwordInput.type === 'password') {
+			passwordInput.type = 'text';
+			toggleVisibilityButton.innerHTML = "👁️";
+		} else {
+			passwordInput.type = 'password';
+			toggleVisibilityButton.innerHTML = "🙈";
+		}
+	}
 
-      if(minUppercase === "" || minSpecial === "" || minCharacters === "" || minLength === "") {
-        alert("Veuillez remplir tous les champs de règles de conformité.");
-        return;
-      }
+	function clearPasswordRules() {
+		let passwordRules = document.getElementById("passwordRules");
+		passwordRules.textContent = "";
+	}
 
-      var specialCharacters = new RegExp('[' + minCharacters + ']', 'g');
-      var specialMatch = password.match(specialCharacters);
+	// Display the password score with the corresponding color
+	function displayScore() {
+		let password = document.getElementById("password").value;
+		let score = 0;
 
-      if(password.length < minLength) {
-        passwordRules.innerHTML = "Votre mot de passe doit avoir une longueur minimale de " + minLength + " caractères.";
-        passwordRules.style.color = "red";
-      } else if(!lowerMatch) {
-        passwordRules.innerHTML = "Votre mot de passe doit contenir des lettres minuscules.";
-        passwordRules.style.color = "red";
-      } else if(!upperMatch || upperMatch.length < minUppercase) {
-        passwordRules.innerHTML = "Votre mot de passe doit contenir au moins " + minUppercase + " lettres majuscules.";
-        passwordRules.style.color = "red";
-      } else if(!specialMatch || specialMatch.length < minSpecial) {
-        passwordRules.innerHTML = "Votre mot de passe doit contenir au moins " + minSpecial + " des caractères spéciaux suivants : " + minCharacters;
-        passwordRules.style.color = "red";
-      } else {
-        passwordRules.innerHTML = "Votre mot de passe est robuste.";
-        passwordRules.style.color = "green";
-      }
-    }
-  </script>
+		// Récupérer les règles de conformité
+		let minLength = Number(document.getElementById("length").value);
+		let minUppercase = Number(document.getElementById("uppercase").value);
+		let minDigits = Number(document.getElementById("digits").value);
+		let minSpecial = Number(document.getElementById("special").value);
+		let characters = document.getElementById("characters").value;
+
+		let regexSpecials = new RegExp(`[${characters}]`, 'g');
+
+		// Augmenter le score en fonction de chaque règle
+		if (password.length >= minLength) {
+			score += password.length - minLength + 1;
+		}
+		let uppercases = (password.match(/[A-Z]/g) || []).length;
+		if (uppercases >= minUppercase) {
+			score += uppercases - minUppercase + 1;
+		}
+		let digits = (password.match(/[0-9]/g) || []).length;
+		if (digits >= minDigits) {
+			score += digits - minDigits + 1;
+		}
+		let specials = (password.match(regexSpecials) || []).length;
+		if (specials >= minSpecial) {
+			score += specials - minSpecial + 1;
+		}
+
+		let scoreDisplay = document.getElementById("scoreDisplay");
+		document.getElementById("score").textContent = score;
+
+		// Call checkPassword to get color and robustness level, but prevent it from updating the UI
+		let colorAndLevel = checkPassword(true);
+
+		// Set the color of the score display
+		scoreDisplay.style.color = colorAndLevel.color;
+		scoreDisplay.style.display = password ? "block" : "none";
+	}
+
+	// Check if password is robust
+	function checkPassword(dryRun = false) {
+		let passwordRules = document.getElementById("passwordRules");
+		let password = document.getElementById("password").value;
+
+		let color = "red";
+		let level = "Pas assez robuste";
+
+		if (!password) {
+			if (!dryRun) {
+				passwordRules.textContent = "Veuillez entrer un mot de passe.";
+				passwordRules.style.color = "red";
+			}
+			return { color, level };
+		}
+
+		let minLength = Number(document.getElementById("length").value);
+		let minUppercase = Number(document.getElementById("uppercase").value);
+		let minDigits = Number(document.getElementById("digits").value);
+		let minSpecial = Number(document.getElementById("special").value);
+		let characters = document.getElementById("characters").value;
+
+		let regexSpecials = new RegExp(`[${characters}]`, 'g');
+
+		let uppercases = (password.match(/[A-Z]/g) || []).length;
+		let digits = (password.match(/[0-9]/g) || []).length;
+		let specials = (password.match(regexSpecials) || []).length;
+
+		if (password.length < minLength || uppercases < minUppercase || digits < minDigits || specials < minSpecial) {
+			color = "red";
+			level = "Pas assez robuste";
+		} else if (password.length >= minLength * 1.25 && uppercases >= minUppercase * 1.25 && digits >= minDigits * 1.25 && specials >= minSpecial * 1.25) {
+			color = "darkgreen";
+			level = "Très robuste";
+		} else {
+			color = "lightgreen";
+			level = "Robuste";
+		}
+
+		if (!dryRun) {
+			passwordRules.textContent = level;
+			passwordRules.style.color = color;
+		}
+		
+		return { color, level };
+	}
+
+</script>
 </body>
 </html>
+
